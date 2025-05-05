@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Shift End Time Calculator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(120deg, #89f7fe, #66a6ff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .card {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 15px 25px rgba(0, 0, 0, 0.1);
+      width: 350px;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.02);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+    }
+
+    label {
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #66a6ff;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #66a6ff;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #4a90e2;
+    }
+
+    #result {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Shift End Time Calculator</h2>
+
+    <label for="startTime">Start Time (hh:mm AM/PM)</label>
+    <input type="text" id="startTime" placeholder="e.g. 09:00 AM">
+
+    <label for="addTime">Duration to Add (hh:mm)</label>
+    <input type="text" id="addTime" placeholder="e.g. 08:00">
+
+    <button onclick="calculateEndTime()">Calculate</button>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    function calculateEndTime() {
+      const start = document.getElementById("startTime").value.trim();
+      const duration = document.getElementById("addTime").value.trim();
+      const resultDiv = document.getElementById("result");
+
+      if (!start || !duration) {
+        resultDiv.innerText = "Please fill in both fields.";
+        return;
+      }
+
+      const [hoursToAdd, minutesToAdd] = duration.split(":").map(Number);
+      const [time, modifier] = start.split(" ");
+      let [hours, minutes] = time.split(":").map(Number);
+
+      if (modifier.toUpperCase() === "PM" && hours !== 12) {
+        hours += 12;
+      } else if (modifier.toUpperCase() === "AM" && hours === 12) {
+        hours = 0;
+      }
+
+      const now = new Date();
+      now.setHours(hours, minutes, 0);
+
+      now.setHours(now.getHours() + hoursToAdd);
+      now.setMinutes(now.getMinutes() + minutesToAdd);
+
+      let endHours = now.getHours();
+      let endMinutes = now.getMinutes();
+      const ampm = endHours >= 12 ? "PM" : "AM";
+
+      endHours = endHours % 12;
+      endHours = endHours ? endHours : 12;
+      endMinutes = endMinutes < 10 ? "0" + endMinutes : endMinutes;
+
+      const finalTime = `${endHours}:${endMinutes} ${ampm}`;
+      resultDiv.innerText = `Your shift ends at: ${finalTime}`;
+    }
+  </script>
+</body>
+</html>
